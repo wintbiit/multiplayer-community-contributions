@@ -205,8 +205,10 @@ namespace Unity.Netcode
 
             for (int i = 0; i < count; i++)
             {
-                NetworkVariableSerialization<TKey>.Read(reader, out TKey key);
-                NetworkVariableSerialization<TValue>.Read(reader, out TValue value);
+                TKey key = default;
+                TValue value = default;
+                NetworkVariableSerialization<TKey>.Read(reader, ref key);
+                NetworkVariableSerialization<TValue>.Read(reader, ref value);
                 m_Keys.Add(key);
                 m_Values.Add(value);
             }
@@ -225,8 +227,11 @@ namespace Unity.Netcode
                 {
                     case NetworkDictionaryEvent<TKey, TValue>.EventType.Add:
                         {
-                            NetworkVariableSerialization<TKey>.Read(reader, out TKey key);
-                            NetworkVariableSerialization<TValue>.Read(reader, out TValue value);
+                            TKey key = default;
+                            TValue value = default;
+
+                            NetworkVariableSerialization<TKey>.Read(reader, ref key);
+                            NetworkVariableSerialization<TValue>.Read(reader, ref value);
 
                             if (m_Keys.Contains(key))
                             {
@@ -256,7 +261,8 @@ namespace Unity.Netcode
                         break;
                     case NetworkDictionaryEvent<TKey, TValue>.EventType.Remove:
                         {
-                            NetworkVariableSerialization<TKey>.Read(reader, out TKey key);
+                            TKey key = default;
+                            NetworkVariableSerialization<TKey>.Read(reader, ref key);
                             var index = m_Keys.IndexOf(key);
 
                             if (index == -1)
@@ -288,8 +294,10 @@ namespace Unity.Netcode
                         break;
                     case NetworkDictionaryEvent<TKey, TValue>.EventType.Value:
                         {
-                            NetworkVariableSerialization<TKey>.Read(reader, out TKey key);
-                            NetworkVariableSerialization<TValue>.Read(reader, out TValue value);
+                            TKey key = default;
+                            TValue value = default;
+                            NetworkVariableSerialization<TKey>.Read(reader, ref key);
+                            NetworkVariableSerialization<TValue>.Read(reader, ref value);
                             var index = m_Keys.IndexOf(key);
 
                             if (index == -1)
@@ -429,10 +437,10 @@ namespace Unity.Netcode
         public int Count => m_Keys.Length;
 
         /// <inheritdoc />
-        public IEnumerable<TKey> Keys => m_Keys.ToArray();
+        public IEnumerable<TKey> Keys => m_Keys.AsArray();
 
         /// <inheritdoc />
-        public IEnumerable<TValue> Values => m_Values.ToArray();
+        public IEnumerable<TValue> Values => m_Values.AsArray();
 
         /// <inheritdoc />
         public TValue this[TKey key]
